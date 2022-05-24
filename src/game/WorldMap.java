@@ -1827,6 +1827,72 @@ public class WorldMap {
 		} //end of settings input loop
 		Save.writeSettingsFile();
 	}
+	
+	private static void shop() {
+		positionIndex = 233;
+		music.stop();
+		music = new AudioPlayer(AudioPlayer.SHOP_PATH, true, volume);
+		music.play();
+		playingErebusAudio = false;
+		
+		MagePath.clearConsole();
+		
+		printDialogue("Shopkeeper");
+		printSeparator();
+		printDialogue("Hello");
+		printSeparator();
+		
+		MagePath.lineConfirm();
+		
+		
+		while (loop == true) {
+			MagePath.clearConsole();
+			System.out.print("Items for sale:\n"
+			+ "1 - Health Potion (restores 10 HP) - 10 Gold\n"
+			+ "2 - Ether (restores 7 MP) - 15 Gold\n"
+			+ "3 - Shield (reduces enemy damage by 50%) - 20 Gold\n");
+			
+			MagePath.intInput = Integer.parseInt(MagePath.scan.nextLine());
+			
+			switch (MagePath.intInput) {
+				case 1: //health potion
+					printDialogue("Shopkeeper");
+					printSeparator();
+					printDialogue("Ah yes... The classic health potion.\n"
+					+ "How many will you need?");
+					printSeparator();
+					
+					MagePath.intInput = Integer.parseInt(MagePath.scan.nextLine());
+					
+					if ((MagePath.intInput * 10) > goldCoinCount) {
+						printDialogue("Shopkeeper");
+						printSeparator();
+						printDialogue("Doesn't appear you have enough Gold...");
+						printSeparator();
+					} else {
+						printDialogue("Shopkeeper");
+						printSeparator();
+						printDialogue("Alright! " + MagePath.intInput + " health potions it is.");
+						printSeparator();
+						
+						healthPotions += MagePath.intInput;
+						goldCoinCount -= (MagePath.intInput * 10);
+					}
+					
+					break;
+				case 2: //ether
+				
+				case 3: //shield
+					
+				default:
+					printText("Please enter a valid option.");
+			}
+		}
+		
+		MagePath.nextLine();
+		
+		Save.writeSaveFile();
+	}
 
 	public static void worldMap(boolean skip) {
 		boolean error = false;
@@ -1947,6 +2013,8 @@ public class WorldMap {
 				} else if (positionIndex == currentMapMetadata[9]) {
 					currentRoom = currentMapMetadata[10];
 					positionIndex = currentMapMetadata[11];
+				} else if (positionIndex == 213 && currentRoom == 9) {
+					shop();
 				}
 				
 				if (MagePath.playerHealth > MagePath.playerMaxHealth) {

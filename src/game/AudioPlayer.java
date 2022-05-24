@@ -16,6 +16,7 @@ public class AudioPlayer {
 	final static String FOREST_PATH = "resources\\music\\forest.wav";
 	final static String HOUSE_PATH = "resources\\music\\house.wav";
 	final static String TOWER_PATH = "resources\\music\\tower.wav";
+	final static String SHOP_PATH = "resources\\music\\shop.wav";
 
 	final static String BATTLE_PATH = "resources\\music\\battle.wav";
 
