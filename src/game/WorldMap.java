@@ -1,41 +1,17 @@
 package game;
 
+ 
+
 public class WorldMap {
-
-	static char[] currentMap = { //this is the char array where all the maps are hotswapped into and then read off of
-			//0	1	2	3	4	5	6	7	8	9	10   11   12   13   14   15   16   17   18   19
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//0
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//20
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//40
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//60
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//80
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//100
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//120
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//140
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//160
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//180
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//200
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//220
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//240
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//260
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//280
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//300
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//320
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//340
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//360
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//380
-			' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '\n',//400
-			'T', //should ALWAYS say 'T' (T for "terminator"). The terminator is at index 420.
-		};
-
-	static int[] currentMapMetadata = {
-			0, 0, 0,
-			0, 0, 0,
-			0, 0, 0,
-			0, 0, 0
-		};
+	
+	//this is the char array where all the maps are hotswapped into and then read off of
+	static char[] currentMap = new char[421];
+	
+	//loading zone metadata for the maps (so that room transitions don't have to be hardcoded)
+	static int[] currentMapMetadata = new int[12];
+	
 	/*
-	MAP LAYOUT DOCUMENTATION
+	MAP LAYOUT DOCUMENTATION (and metadata)
 
 	the first value is the index pos of the loading zone (int) 
 	the second value is the map destination (int)
@@ -133,7 +109,9 @@ public class WorldMap {
 	static boolean huntingArmour = false;
 	static boolean chainmailArmour = false;
 	static int currentArmour = 0; //normal range 0-2
-
+	
+	static boolean shield = false;
+	
 	static boolean traderLeftHouse = false;
 
 	static boolean lostInWoods = false;
@@ -806,8 +784,13 @@ public class WorldMap {
 
 		for (int i = 0; i < c.length; i++) {
 			System.out.print(c[i]);
-
-			if ((c[i] == '\n') || (c[i] == '.') || (c[i] == '!') || (c[i] == '?')) {
+			
+			
+			if (c[i] == '\n' && i == c.length - 1) {
+				System.out.print('\n');
+			} else if (i == c.length - 1) {
+				System.out.print(c[i] + '\n');
+			} else if ((c[i] == '\n') || (c[i] == '.') || (c[i] == '!') || (c[i] == '?')) {
 				sfx.stop();
 				sfx = new AudioPlayer(AudioPlayer.TEXT_PATH, true, sfxVolume);
 				try {
@@ -843,7 +826,7 @@ public class WorldMap {
 		} else {
 			delay = 9;
 		}
-		System.out.print('\n');
+		//System.out.print('\n');
 		for (int i = 0; i < 80; i++) {
 			System.out.print('-');
 			try {
@@ -902,6 +885,7 @@ public class WorldMap {
 		}
 		if (caveTunnelsChest1 == false && currentRoom == 1 && positionIndex == 261) { //cave tunnels pickaxe chest
 			caveTunnelsChest1 = true;
+			brokenPickaxe = true;
 			playItemGet();
 			printText("There was a pickaxe in the chest. It's pretty old...\n");
 			MagePath.lineConfirm();
@@ -1533,7 +1517,7 @@ public class WorldMap {
 				+ "3 - EQUIPS\n"
 				+ "4 - Exit\n");
 
-			MagePath.intInput = Integer.parseInt(MagePath.scan.nextLine());
+			MagePath.intInput = MagePath.enterNumber(1, 4);
 			switch (MagePath.intInput) {
 				case 1: //key item display (you can't use these)
 					//pickaxe status
@@ -1577,8 +1561,10 @@ public class WorldMap {
 					} else if (manuscript == true && translatedManuscript == true) {
 						printText("6 - Translated Manuscript\n");
 					}
-
-					MagePath.intInput = Integer.parseInt(MagePath.scan.nextLine());
+					
+					loop = true;
+					while (loop == true) {
+					MagePath.intInput = MagePath.enterNumber(1, 6);
 
 					switch (MagePath.intInput) {
 						case 1:
@@ -1617,18 +1603,19 @@ public class WorldMap {
 							break;
 						case 6:
 							if (manuscript == false && translatedManuscript == false) {
+							printText(USED_UNUSABLE_ITEM);
 								//just do nothing lol
 							} else if (manuscript == true && translatedManuscript == false) {
 								printText("The manuscript appears to be in a different language...\n"
 								+ "You can't understand what it says.\n"
 								+ "Maybe someone can translate it for you?");
-								MagePath.nextLine();
 							} else if (manuscript == true && translatedManuscript == true) {
 								printText("The manuscript reads:\n"
 								+ "\"The way through the forest is South, East, South, West, East, South.\"");
-								MagePath.nextLine();
 							}
+							MagePath.nextLine();
 							break;
+					}
 					}
 					break;
 				case 3: //
@@ -1637,8 +1624,6 @@ public class WorldMap {
 				case 4: //exit the inventory
 					loop = false;
 					break;
-				default:
-					printText("Please enter a valid option.");
 			}
 			MagePath.lineConfirm();
 		} //end of inventory loop
@@ -1839,7 +1824,7 @@ public class WorldMap {
 		
 		printDialogue("Shopkeeper");
 		printSeparator();
-		printDialogue("Hello");
+		printDialogue("Hello! Feel free to look around.");
 		printSeparator();
 		
 		MagePath.lineConfirm();
@@ -1850,9 +1835,10 @@ public class WorldMap {
 			System.out.print("Items for sale:\n"
 			+ "1 - Health Potion (restores 10 HP) - 10 Gold\n"
 			+ "2 - Ether (restores 7 MP) - 15 Gold\n"
-			+ "3 - Shield (reduces enemy damage by 50%) - 20 Gold\n");
+			+ "3 - Shield (reduces enemy damage by 50%) - 20 Gold\n"
+			+ "4 - Exit\n");
 			
-			MagePath.intInput = Integer.parseInt(MagePath.scan.nextLine());
+			MagePath.intInput = MagePath.enterNumber(1, 4);
 			
 			switch (MagePath.intInput) {
 				case 1: //health potion
@@ -1862,7 +1848,7 @@ public class WorldMap {
 					+ "How many will you need?");
 					printSeparator();
 					
-					MagePath.intInput = Integer.parseInt(MagePath.scan.nextLine());
+					MagePath.intInput = MagePath.enterNumber(0, -1);
 					
 					if ((MagePath.intInput * 10) > goldCoinCount) {
 						printDialogue("Shopkeeper");
@@ -1878,18 +1864,68 @@ public class WorldMap {
 						healthPotions += MagePath.intInput;
 						goldCoinCount -= (MagePath.intInput * 10);
 					}
-					
+					MagePath.nextLine();
 					break;
 				case 2: //ether
-				
-				case 3: //shield
+					printDialogue("Shopkeeper");
+					printSeparator();
+					printDialogue("Ah yes... an Ether.\n"
+					+ "How many will you need?");
+					printSeparator();
 					
-				default:
-					printText("Please enter a valid option.");
+					MagePath.intInput = MagePath.enterNumber(0, -1);
+					
+					if ((MagePath.intInput * 15) > goldCoinCount) {
+						printDialogue("Shopkeeper");
+						printSeparator();
+						printDialogue("Doesn't appear you have enough Gold...");
+						printSeparator();
+					} else {
+						printDialogue("Shopkeeper");
+						printSeparator();
+						printDialogue("Alright! " + MagePath.intInput + " ethers it is.");
+						printSeparator();
+						
+						healthPotions += MagePath.intInput;
+						goldCoinCount -= (MagePath.intInput * 15);
+					}
+					MagePath.nextLine();
+					break;
+				case 3: //shield
+					printDialogue("Shopkeeper");
+					printSeparator();
+					printDialogue("Ah yes... The classic health potion.\n"
+					+ "How many will you need?");
+					printSeparator();
+					
+					MagePath.intInput = MagePath.enterNumber (0, -1);
+					
+					if (goldCoinCount < 20) {
+						printDialogue("Shopkeeper");
+						printSeparator();
+						printDialogue("Doesn't appear you have enough Gold...");
+						printSeparator();
+					} else {
+						printDialogue("Shopkeeper");
+						printSeparator();
+						printDialogue("Alright! Here's your shield.");
+						printSeparator();
+						
+						shield = true;
+						goldCoinCount -= 20;
+					}
+					MagePath.nextLine();
+					break;
+				case 4:
+					loop = false;
+					printDialogue("Shopkeeper");
+					printSeparator();
+					printDialogue("See you later!");
+					printSeparator();
+					MagePath.nextLine();
+					break;
 			}
 		}
-		
-		MagePath.nextLine();
 		
 		Save.writeSaveFile();
 	}

@@ -1,4 +1,4 @@
-package game;
+ 
 
 /**
  * extra quest for "Medieval Adventure"
@@ -6,6 +6,9 @@ package game;
  * @author Tobin Brenner (Started on Apr 19 2022)
  * @version 1.0
  */
+package game;
+ 
+ 
 import java.util.Scanner;
 import java.util.Random;
 import java.io.IOException;
@@ -13,7 +16,9 @@ import java.io.IOException;
 public class MagePath { 
 	
 	static final String INPUT_INDICATOR = "...";
-
+	static final String NUMBER_TOO_LARGE = "Woah, that number is pretty big.";
+	static final String INVALID_OPTION = "Enter a valid option.";
+	
 	static boolean debug = false;
 
 	static Scanner scan = new Scanner(System.in);
@@ -83,19 +88,13 @@ public class MagePath {
 	you start with: nothing
 	buy from the shop: hunting armour
 	find in the cave: chainmail armour
-
 	 */
 
 	public static void nextLine() {
 		System.out.print("\n" + INPUT_INDICATOR);
 		lineInput = scan.nextLine();
 		if (lineInput.isEmpty() == true) {
-			lineInput = "\u0069";
-		}
-		try {
-			Thread.sleep(250);
-		} catch (InterruptedException ex) {
-			ex.printStackTrace();
+			lineInput = " ";
 		}
 	}
 
@@ -124,6 +123,41 @@ public class MagePath {
 		loop = true;
 	}
 
+	public static int enterNumber(int lowerBound, int upperBound) {
+		int tempInput = 0;
+		boolean tempLoop = true;
+		boolean inputLoop = true;
+		
+		if (upperBound == -1) {
+			upperBound = 999999999; //999 million
+		}
+		
+		while (inputLoop == true) {
+			String temp = scan.nextLine();
+		
+			tempLoop = false;
+			if (temp.length() > 6) {
+				WorldMap.printText(NUMBER_TOO_LARGE + "\n");
+			} else if (temp.isEmpty() == true) {
+				WorldMap.printText(INVALID_OPTION + "\n");
+			} else {
+				tempLoop = true;
+			}
+			
+			while (tempLoop == true) {
+				tempInput = Integer.parseInt(temp);
+				
+				if ((tempInput < lowerBound) || (tempInput > upperBound)) {
+					WorldMap.printText(INVALID_OPTION + "\n");
+				} else {
+					tempLoop = false;
+					inputLoop = false;
+				}
+			}
+		}
+		return tempInput;
+	}
+	
 	public static void getEnemyStats(int id) {
 		/*
 		VARIABLE NAMES AND USES
@@ -365,7 +399,7 @@ public class MagePath {
 		
 		while (loop == true) { //start of battle loop
 			if (dead == false) { //start of alive if
-				playerHealth = playerMaxHealth; //cheat code? idk if you want to call it that or not lol
+				// playerHealth = playerMaxHealth; //cheat code? idk if you want to call it that or not lol
 				if (playerTurn == true) {
 					hudMessage1 = "It's your turn! What move would you like to do?";
 					hudMessage2 = "1 - " + playerAttackList[0];
@@ -375,7 +409,7 @@ public class MagePath {
 
 					printBattleHud();
 
-					intInput = Integer.parseInt(scan.nextLine());
+					intInput = enterNumber(1, 4);
 
 					if (intInput == 4) {
 						hudMessage1 = enemyDescription;
@@ -503,13 +537,15 @@ public class MagePath {
 	
 	public static void clearConsole() {
 		try {
-		    /*
-    		runs a new process, with cmd.exe
-		
-			run /c to run the commands in a different thread, so that there isn't any garbage printed to the current console
-			/c will also close the new thread when it is done executing
-			
-			run cls to clear the console
+		    /**
+    		 * runs a new process, with cmd.exe
+			 * 
+			 * run /c to run the commands in a different thread, so that there isn't any garbage printed to the current console
+			 * /c will also close the new thread when it is done executing
+			 * 
+			 * run cls to clear the console
+			 * 
+			 * also, did i steal this from a stackoverflow post? maybe......
 			 */
 			new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 		} catch (IOException ioex) {
@@ -612,28 +648,31 @@ public class MagePath {
 			WorldMap.printText("Wake up, " + playerName + "...");
 			nextLine();
 		}
-
-		//end of intro story
-		WorldMap.worldMap(skip); //goes to the main game in the world map class
 		
-		if (dead == true) {
-			WorldMap.music.stop();
-			WorldMap.healthSound.stop();
-			WorldMap.sfx = new AudioPlayer(AudioPlayer.DEATH_PATH, false, WorldMap.sfxVolume);
-			WorldMap.sfx.play();
-			WorldMap.printText("You died...");
-			playerHealth = 1;
-			nextLine();
-		} else {
-			Save.writeSaveFile();
+		while (true) {
+			//end of intro story
+			WorldMap.worldMap(skip); //goes to the main game in the world map class
+			skip = true;
+			if (dead == true) {
+				WorldMap.music.stop();
+				WorldMap.healthSound.stop();
+				WorldMap.sfx = new AudioPlayer(AudioPlayer.DEATH_PATH, false, WorldMap.sfxVolume);
+				WorldMap.sfx.play();
+				WorldMap.printText("You died...");
+				playerHealth = 1;
+				
+				WorldMap.endTime = System.currentTimeMillis();
+				WorldMap.playTimeSeconds = (WorldMap.playTimeSeconds + WorldMap.endTime) - WorldMap.startTime;
+				Save.writeAccountFile();		
+				Save.writeSettingsFile();
+				nextLine();
+			} else {
+				Save.writeSaveFile();
+				WorldMap.endTime = System.currentTimeMillis();
+				WorldMap.playTimeSeconds = (WorldMap.playTimeSeconds + WorldMap.endTime) - WorldMap.startTime;
+				Save.writeAccountFile();		
+				Save.writeSettingsFile();
+			}
 		}
-		WorldMap.endTime = System.currentTimeMillis();
-		WorldMap.playTimeSeconds = (WorldMap.playTimeSeconds + WorldMap.endTime) - WorldMap.startTime;
-		Save.writeAccountFile();		
-		Save.writeSettingsFile();
-
-		//exit the program
-		
-		
 	}
 }

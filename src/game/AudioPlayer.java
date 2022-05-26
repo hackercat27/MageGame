@@ -17,7 +17,6 @@ public class AudioPlayer {
 	final static String HOUSE_PATH = "resources\\music\\house.wav";
 	final static String TOWER_PATH = "resources\\music\\tower.wav";
 	final static String SHOP_PATH = "resources\\music\\shop.wav";
-
 	final static String BATTLE_PATH = "resources\\music\\battle.wav";
 
 	final static String BOULDER_BREAK_PATH = "resources\\sfx\\boulder_break.wav";
@@ -43,7 +42,9 @@ public class AudioPlayer {
 	AudioInputStream audioStream;
 	FloatControl volumeControl;
 	boolean loopAudio;
-
+	
+	int loopStartPoint;
+	
 	public AudioPlayer(String path, boolean aLoop, float vol) {
 		try {
 			audioStream = AudioSystem.getAudioInputStream(new File(path).getAbsoluteFile());
@@ -73,17 +74,53 @@ public class AudioPlayer {
 		} else if (this.decibels > 20.0f) {
 			this.decibels = 20.0f;
 		}
+		
+		loopStartPoint = 0;
 	}
-
+	
+	public AudioPlayer(String path, boolean aLoop, float vol, int startPoint) {
+		try {
+			audioStream = AudioSystem.getAudioInputStream(new File(path).getAbsoluteFile());
+		} catch (UnsupportedAudioFileException ex) {
+			ex.printStackTrace();
+			MagePath.nextLine();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			MagePath.nextLine();
+		}
+		loopAudio = aLoop;
+		
+		try {
+			clip = AudioSystem.getClip();
+			clip.open(audioStream);
+		} catch (LineUnavailableException ex) {
+			ex.printStackTrace();
+			MagePath.nextLine();
+		} catch (IOException ex) {
+			ex.printStackTrace();
+			MagePath.nextLine();
+		}
+		
+		decibels = vol;
+		if (this.decibels < -80.0f) {
+			this.decibels = -80.0f;
+		} else if (this.decibels > 20.0f) {
+			this.decibels = 20.0f;
+		}
+		
+		loopStartPoint = startPoint;
+	}
+	
 	public void play() {
 		volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 		volumeControl.setValue(this.decibels);
+		clip.setLoopPoints(this.loopStartPoint, -1);
 		if (loopAudio == true) {
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
 		}
 		clip.start();
 	}
-
+	
 	public void stop() {
 		clip.stop();
 		clip.close();
