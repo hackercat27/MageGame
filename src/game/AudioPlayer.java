@@ -48,10 +48,7 @@ public class AudioPlayer {
 	public AudioPlayer(String path, boolean aLoop, float vol) {
 		try {
 			audioStream = AudioSystem.getAudioInputStream(new File(path).getAbsoluteFile());
-		} catch (UnsupportedAudioFileException ex) {
-			ex.printStackTrace();
-			MagePath.nextLine();
-		} catch (IOException ex) {
+		} catch (UnsupportedAudioFileException | IOException ex) {
 			ex.printStackTrace();
 			MagePath.nextLine();
 		}
@@ -60,14 +57,11 @@ public class AudioPlayer {
 		try {
 			clip = AudioSystem.getClip();
 			clip.open(audioStream);
-		} catch (LineUnavailableException ex) {
-			ex.printStackTrace();
-			MagePath.nextLine();
-		} catch (IOException ex) {
+		} catch (LineUnavailableException | IOException ex) {
 			ex.printStackTrace();
 			MagePath.nextLine();
 		}
-		
+
 		decibels = vol;
 		if (this.decibels < -80.0f) {
 			this.decibels = -80.0f;
@@ -81,10 +75,7 @@ public class AudioPlayer {
 	public AudioPlayer(String path, boolean aLoop, float vol, int startPoint) {
 		try {
 			audioStream = AudioSystem.getAudioInputStream(new File(path).getAbsoluteFile());
-		} catch (UnsupportedAudioFileException ex) {
-			ex.printStackTrace();
-			MagePath.nextLine();
-		} catch (IOException ex) {
+		} catch (UnsupportedAudioFileException | IOException ex) {
 			ex.printStackTrace();
 			MagePath.nextLine();
 		}
@@ -93,14 +84,11 @@ public class AudioPlayer {
 		try {
 			clip = AudioSystem.getClip();
 			clip.open(audioStream);
-		} catch (LineUnavailableException ex) {
-			ex.printStackTrace();
-			MagePath.nextLine();
-		} catch (IOException ex) {
+		} catch (LineUnavailableException | IOException ex) {
 			ex.printStackTrace();
 			MagePath.nextLine();
 		}
-		
+
 		decibels = vol;
 		if (this.decibels < -80.0f) {
 			this.decibels = -80.0f;
@@ -115,7 +103,7 @@ public class AudioPlayer {
 		volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
 		volumeControl.setValue(this.decibels);
 		clip.setLoopPoints(this.loopStartPoint, -1);
-		if (loopAudio == true) {
+		if (loopAudio) {
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
 		}
 		clip.start();

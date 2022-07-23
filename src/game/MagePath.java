@@ -93,7 +93,7 @@ public class MagePath {
 	public static void nextLine() {
 		System.out.print("\n" + INPUT_INDICATOR);
 		lineInput = scan.nextLine();
-		if (lineInput.isEmpty() == true) {
+		if (lineInput.isEmpty()) {
 			lineInput = " ";
 		}
 	}
@@ -101,9 +101,9 @@ public class MagePath {
 	public static void lineConfirm() {
 		boolean gotPrompt = false;
 		System.out.print("\n" + INPUT_INDICATOR);
-		while (loop == true) {
+		while (loop) {
 			lineInput = scan.nextLine();
-			if (lineInput.isEmpty() == true) {
+			if (lineInput.isEmpty()) {
 				lineInput = " ";
 			}
 			if (lineInput.charAt(0) != WorldMap.keyMoveUp 
@@ -111,7 +111,7 @@ public class MagePath {
 			|| lineInput.charAt(0) != WorldMap.keyMoveDown 
 			|| lineInput.charAt(0) != WorldMap.keyMoveRight) {
 				loop = false;
-			} else if (gotPrompt == false) {
+			} else if (!gotPrompt) {
 				WorldMap.printText("Please enter a value other than " 
 				+ WorldMap.keyMoveUp + ", " 
 				+ WorldMap.keyMoveLeft + ", " 
@@ -132,19 +132,19 @@ public class MagePath {
 			upperBound = 999999999; //999 million
 		}
 		
-		while (inputLoop == true) {
+		while (inputLoop) {
 			String temp = scan.nextLine();
 		
 			tempLoop = false;
 			if (temp.length() > 6) {
 				WorldMap.printText(NUMBER_TOO_LARGE + "\n");
-			} else if (temp.isEmpty() == true) {
+			} else if (temp.isEmpty()) {
 				WorldMap.printText(INVALID_OPTION + "\n");
 			} else {
 				tempLoop = true;
 			}
 			
-			while (tempLoop == true) {
+			while (tempLoop) {
 				tempInput = Integer.parseInt(temp);
 				
 				if ((tempInput < lowerBound) || (tempInput > upperBound)) {
@@ -263,7 +263,7 @@ public class MagePath {
 			enemyHitRate[2] = 100;
 		} else {
 			enemyName = "MissingNO.";
-			enemyDescription = "Invalid ememy ID was used!";
+			enemyDescription = "Invalid enemy ID was used!";
 			enemyMaxHealth = 30;
 			enemyDefence = 1;
 			enemyAttackList[0] = "Attack 1";
@@ -304,19 +304,19 @@ public class MagePath {
 		System.out.print(enemyHudStats() + "\n\n\n" 
 			+ playerHudStats() + "\n"
 		);
-		if (hudMessage1.isEmpty() == false) {
+		if (!hudMessage1.isEmpty()) {
 			WorldMap.printText(hudMessage1 + "\n");
 		}
-		if (hudMessage2.isEmpty() == false) {
+		if (!hudMessage2.isEmpty()) {
 			WorldMap.printText(hudMessage2 + "\n");
 		}
-		if (hudMessage3.isEmpty() == false) {
+		if (!hudMessage3.isEmpty()) {
 			WorldMap.printText(hudMessage3 + "\n");
 		}
-		if (hudMessage4.isEmpty() == false) {
+		if (!hudMessage4.isEmpty()) {
 			WorldMap.printText(hudMessage4 + "\n");
 		}
-		if (hudMessage5.isEmpty() == false) {
+		if (!hudMessage5.isEmpty()) {
 			WorldMap.printText(hudMessage5 + "\n");
 		}
 	}
@@ -352,18 +352,18 @@ public class MagePath {
 
 		playerTurn = rand.nextBoolean();
 		if (enemyName.equals("Trader Steve")) {
-			if (playerTurn == true) {
+			if (playerTurn) {
 				WorldMap.printDialogue("Trader Steve,\nI will let you go first.");
 			} else {
 				WorldMap.printDialogue("Trader Steve,\nI will attack you now!");
 			}
 		} else {
-			if (grammarAn == true) {
+			if (grammarAn) {
 				WorldMap.printText("An " + enemyName + " appears!");
 			} else {
 				WorldMap.printText("A " + enemyName + " appears!");
 			}
-			if (playerTurn == true) { //if it's true, then it's the players turn
+			if (playerTurn) { //if it's true, then it's the players turn
 				WorldMap.printText(" They don't notice you. It's your time to strike!");
 			} else {
 				WorldMap.printText(" They are about to attack!");
@@ -397,10 +397,10 @@ public class MagePath {
 			enemyGoldDropAmount = 0;
 		}
 		
-		while (loop == true) { //start of battle loop
-			if (dead == false) { //start of alive if
+		while (loop) { //start of battle loop
+			if (!dead) { //start of alive if
 				// playerHealth = playerMaxHealth; //cheat code? idk if you want to call it that or not lol
-				if (playerTurn == true) {
+				if (playerTurn) {
 					hudMessage1 = "It's your turn! What move would you like to do?";
 					hudMessage2 = "1 - " + playerAttackList[0];
 					hudMessage3 = "2 - " + playerAttackList[1];
@@ -548,10 +548,8 @@ public class MagePath {
 			 * also, did i steal this from a stackoverflow post? maybe......
 			 */
 			new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-		} catch (IOException ioex) {
-		    ioex.printStackTrace();
-		} catch (InterruptedException iex) {
-			iex.printStackTrace();
+		} catch (IOException | InterruptedException ex) {
+		    ex.printStackTrace();
 		}
 	}
 	
@@ -567,7 +565,7 @@ public class MagePath {
 		// WorldMap.printText("Reading game save data...\n");
 		Save.readSaveFile();
 		
-		if (WorldMap.blacksmithChest == true) {
+		if (WorldMap.blacksmithChest) {
 			WorldMap.blacksmithMultiplier = 5;
 		}
 		// WorldMap.printText("Reading account data...\n");
@@ -577,7 +575,7 @@ public class MagePath {
 		
 		clearConsole();
 		
-		skip = (playerName.isEmpty() == false); //if your player name is blank, then open the game with the first-time intro message. else, skip it and hop right in.
+		skip = (!playerName.isEmpty()); //if your player name is blank, then open the game with the first-time intro message. else, skip it and hop right in.
 		
 		playerAttackList[0] = "Hand Slap";
 		playerAttackDamage[0] = 4;
@@ -586,7 +584,7 @@ public class MagePath {
 		playerAttackList[2] = "Kick";
 		playerAttackDamage[2] = 10;
 
-		if (skip == false) {
+		if (!skip) {
 			WorldMap.printText("Welcome to Mage Game.\n");
 			try {
 			    Thread.sleep(400);
@@ -606,9 +604,9 @@ public class MagePath {
 				+ "Enter the name that you wish to be called by: ");
 
 			loop = true;
-			while (loop == true) {
+			while (loop) {
 				playerName = scan.nextLine();
-				if (playerName.isEmpty() == true) {
+				if (playerName.isEmpty()) {
 					WorldMap.printText("\nHey, your name can't be blank. Enter a name: ");
 				} else {
 					loop = false;
@@ -649,11 +647,11 @@ public class MagePath {
 			nextLine();
 		}
 		
-		while (true) {
+		while (loop) {
 			//end of intro story
 			WorldMap.worldMap(skip); //goes to the main game in the world map class
 			skip = true;
-			if (dead == true) {
+			if (dead) {
 				WorldMap.music.stop();
 				WorldMap.healthSound.stop();
 				WorldMap.sfx = new AudioPlayer(AudioPlayer.DEATH_PATH, false, WorldMap.sfxVolume);

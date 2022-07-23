@@ -1,4 +1,2 @@
 # MageGame
-First big project. Sortof wish I learned the basics more before I made this.
-
-The game itself isn't finsihed yet, but it should be done by at MOST July 2022 (if I don't lose motivation to keep it up).
+First big project. Sortof wish I learned the basics more before I made this, and I'll probably never finish it as most of the code is frankly pretty terrible. However, it was a good learning experience and I am glad that I started this, who knows, maybe someday I'll come back to this and make this again, but better.

@@ -1,0 +1,2 @@
+java game.MagePath
+pause
